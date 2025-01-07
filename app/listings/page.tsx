@@ -59,7 +59,7 @@ export default function PropertyListings() {
             .then((response) => {
                 //to show the latest listings
                 if(Array.isArray(response.data.data)){
-                  const reversedListings = response.data.data.reverse();
+                  const reversedListings = [...response.data.data].reverse();
                   console.log("This is my reversed Listing:", reversedListings);
                   setListings(reversedListings);
                 }
