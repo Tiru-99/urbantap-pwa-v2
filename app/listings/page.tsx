@@ -2,7 +2,7 @@
 import { useState , useEffect} from 'react'
 import axios from 'axios'
 import Link from 'next/link'
-import { MapPin, Home, Bath, Square , Expand } from 'lucide-react'
+import { MapPin, Home, Bath, Expand } from 'lucide-react'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

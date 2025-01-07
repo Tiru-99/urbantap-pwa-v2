@@ -1,6 +1,6 @@
 'use client'
 import{ useState } from 'react';
-import { ChevronLeft , ChevronRight, Circle, LucideSyringe, MapPin} from 'lucide-react'
+import { ChevronLeft , ChevronRight, Circle, MapPin} from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Home, Bath , Expand , Upload , ArrowLeft} from 'lucide-react'
 import Link from 'next/link'
