@@ -58,10 +58,11 @@ export default function PropertyListings() {
         axios.get(`${api}/listings`, { headers })
             .then((response) => {
                 //to show the latest listings
-                const reversedListings = response.data.data.reverse(); 
-                console.log("this is my reversed Listing" , reversedListings);
-                setListings(reversedListings);
-                console.log("this is my latest listing" , listings)
+                if(Array.isArray(response.data.data)){
+                  const reversedListings = response.data.data.reverse();
+                  console.log("This is my reversed Listing:", reversedListings);
+                  setListings(reversedListings);
+                }
 
                 setIsLoading(false);
 
