@@ -38,8 +38,6 @@ interface Listing {
 }
 
 
-
-
 export default function PropertyListings() {
 
 
@@ -61,6 +59,7 @@ export default function PropertyListings() {
                 const reversedListings = response.data.data.reverse(); 
                 setListings(reversedListings);
                 setIsLoading(false);
+                
             })
             .catch((e) => {
                 console.log("Something went wrong while fetching the api", e);
@@ -264,7 +263,7 @@ export default function PropertyListings() {
                 </div>
             }
 
-            <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
+            <div className="px-4 py-3 flex items-center justify-between ">
               <div className="flex items-center gap-2">
                 <Home className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">{getBedroomDisplay(listing.listing.no_of_bedrooms)} BHK</span>
