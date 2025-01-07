@@ -45,6 +45,8 @@ export default function PropertyListings() {
     const[listings , setListings] = useState<Listing[]>([]); 
     const[isLoading , setIsLoading] = useState(false);
 
+    console.log("This is my Listings" , listings)
+
     const headers = {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with your API key or token
         'Content-Type': 'application/json',
@@ -59,7 +61,7 @@ export default function PropertyListings() {
                 const reversedListings = response.data.data.reverse(); 
                 setListings(reversedListings);
                 setIsLoading(false);
-                
+
             })
             .catch((e) => {
                 console.log("Something went wrong while fetching the api", e);
