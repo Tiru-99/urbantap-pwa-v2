@@ -61,7 +61,7 @@ export default function PropertyListings() {
             const response = await axios.get(`${api}/listings`, { headers });
             
             if (Array.isArray(response.data.data)) {
-              const reversedListings = [...response.data.data].reverse();
+              const reversedListings = await [...response.data.data].reverse();
               console.log("This is my reversed Listing:", reversedListings);
               setListings(reversedListings);
             }
@@ -192,7 +192,7 @@ export default function PropertyListings() {
 
       {/* Listings */}
       <div className="space-y-8">
-        {listings.reverse().slice(0,6).map((listing, index) => (
+        {listings.slice(0,6).map((listing, index) => (
           <div 
             key={listing.listing.id} 
             className={cn(
