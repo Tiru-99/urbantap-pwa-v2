@@ -53,27 +53,26 @@ export default function PropertyListings() {
       };
 
       useEffect(() => {
-        const api = process.env.NEXT_PUBLIC_API;
-        setIsLoading(true);
-        
-        axios.get(`${api}/listings`, { headers })
-          .then((response) => {
+        const fetchListings = async () => {
+          const api = process.env.NEXT_PUBLIC_API;
+          setIsLoading(true);
+      
+          try {
+            const response = await axios.get(`${api}/listings`, { headers });
+            
             if (Array.isArray(response.data.data)) {
-              const original = response.data.data;
-              const reversed = [];
-              //used hardcoded function instead of reverse because reverse was not working in prod
-              for (let i = original.length - 1; i >= 0; i--) {
-                reversed.push(original[i]);
-              }
-              console.log("This is my reversed Listing:", reversed);
-              setListings(reversed);
+              const reversedListings = [...response.data.data].reverse();
+              console.log("This is my reversed Listing:", reversedListings);
+              setListings(reversedListings);
             }
+          } catch (error) {
+            console.error("Something went wrong while fetching the api:", error);
+          } finally {
             setIsLoading(false);
-          })
-          .catch((e) => {
-            console.log("Something went wrong while fetching the api", e);
-            setIsLoading(false);
-          });
+          }
+        };
+      
+        fetchListings();
       }, []);
     
     //helper functions
