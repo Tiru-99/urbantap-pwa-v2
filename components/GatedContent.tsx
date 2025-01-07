@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Lock } from 'lucide-react'
+
 
 interface GatedContentProps {
   className?: string

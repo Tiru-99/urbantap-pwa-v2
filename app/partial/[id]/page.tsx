@@ -48,6 +48,7 @@ export default function Page() {
   
   const[listing , setListing] = useState<Listing | undefined>(); 
   const[isLoading , setIsLoading] = useState(false);
+  console.log(isLoading);
 
   console.log("This is the listing data " , listing);
 
