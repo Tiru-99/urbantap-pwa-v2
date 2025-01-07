@@ -1,10 +1,7 @@
 "use client"
-import Link from 'next/link'
 import PropertyDetails from '@/components/PropertyListing'
 import { useState , useEffect } from 'react'
-import { Button } from '@/components/ui/button'
 import axios from 'axios'
-import { ArrowLeft } from 'lucide-react'
 import { useParams } from 'next/navigation'
 import { Loader } from '@/components/Loader'
 
