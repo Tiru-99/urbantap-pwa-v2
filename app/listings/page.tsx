@@ -182,11 +182,8 @@ export default function PropertyListings() {
     return (
       <>
       <FixedNavbar></FixedNavbar>
-      <div className="container mx-auto px-4 py-6 max-w-5xl bg-white">
+      <div className="container mx-auto md:px-4 py-6 max-w-5xl bg-white">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-semibold">Looking for Rental</h1>
-      </div>
       
       {isLoading && <Loader size="lg" />}
 
@@ -196,7 +193,7 @@ export default function PropertyListings() {
           <div 
             key={listing.listing.id} 
             className={cn(
-              "max-w-3xl mx-auto bg-white rounded-xl shadow-sm",
+              "max-w-3xl mx-auto bg-white border-b-8 border-gray-100",
               index === 5 && "relative"
             )}
           >
@@ -251,7 +248,7 @@ export default function PropertyListings() {
             </div>
 
            {listing.listing.image_urls && listing.listing.image_urls.length > 0 && <div>
-                <div className="w-full md:h-[400px] h-[200px] relative">
+                <div className="w-full md:h-[400px] h-[200px] relative px-4 md:px-0">
                     <img 
                         src={listing.listing.image_urls[0]}
                         alt={listing.listing.title}
@@ -259,7 +256,7 @@ export default function PropertyListings() {
                     />
                     </div>
 
-                    <div className="bg-blue-50 px-4 py-3 rounded-b-xl">
+                    <div className="bg-blue-50 px-4 mx-4 md:mx-0 py-3 rounded-b-xl">
                     <p className="font-semibold text-lg">Budget: {listing.listing.min_price} AED</p>
                     <div className="flex items-center gap-2 mt-2">
                         <MapPin className="w-4 h-4 text-muted-foreground" />
@@ -269,7 +266,7 @@ export default function PropertyListings() {
                 </div>
             }
 
-            <div className="px-4 py-3 flex items-center justify-between ">
+            <div className="px-4 py-3 flex items-center justify-between mx-4 ">
               <div className="flex items-center gap-2">
                 <Home className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">{getBedroomDisplay(listing.listing.no_of_bedrooms)} BHK</span>

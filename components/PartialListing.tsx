@@ -110,7 +110,7 @@ export default function PartialListing({listing} : PropertyDetailsProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b">
+      <div className="top-0 z-10 bg-background border-b">
         <div className="px-4 h-20 flex items-center justify-between ">
           <div className="flex items-center gap-3 ">
             <Link href="/listings">

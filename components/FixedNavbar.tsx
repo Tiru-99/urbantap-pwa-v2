@@ -36,7 +36,7 @@ export default function FixedNavbar() {
           <div className="flex items-center gap-2">
             <Button 
               variant="default"
-              className="h-9 px-4 rounded-full bg-primary"
+              className="h-9 px-4 rounded-full bg-gray-100 text-black hover:text-white"
             >
               Use app
             </Button>

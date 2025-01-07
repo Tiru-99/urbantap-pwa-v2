@@ -130,7 +130,7 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
     <>
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b">
+      <div className="top-0 z-10 bg-background border-b">
         <div className="px-4 h-20 flex items-center justify-between ">
           <div className="flex items-center gap-3 ">
             <Link href="/listings">
@@ -185,8 +185,8 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
         </div>}
 
         {/* Property Details */}
-        <div className="p-4 space-y-6">
-          <div>
+        <div className="md:p-4 space-y-6">
+          <div className='p-4'>
             <h2 className="text-lg font-semibold mb-1">{createTitleForListing(listing?.listing.looking_for , listing?.listing.category)}</h2>
             
         {listing?.listing?.title ? (
@@ -234,7 +234,7 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
       )}
 
 
-            <div className="bg-blue-50 rounded-lg p-4">
+            <div className="bg-blue-50 rounded-lg p-4 ml-0.5 mr-2">
               <p className="text-lg font-semibold">Rent: {listing?.listing.min_price} AED</p>
               <div className="flex items-center gap-2 mt-2 text-muted-foreground">
                 <MapPin className="h-4 w-4" />
@@ -244,7 +244,7 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
           </div>
 
           {/* Key Features */}
-          <div className="grid grid-cols-3 gap-4 py-2 text-gray-500">
+          <div className="grid grid-cols-3 gap-4 text-gray-500 border-b-8 pb-8 -mt-6 border-gray-100">
             <div className="text-center flex justify-center items-center gap-2">
               <span><Home/></span>
               <p className="text-sm">{getBedroomDisplay(listing?.listing.no_of_bedrooms)} BHK</p>
@@ -255,51 +255,132 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
             </div>
             <div className="text-center flex justify-center items-center gap-2">
               <span><Expand/></span>
-              <p className="text-sm">{listing?.listing.sq_ft} sq.ft</p>
+              <p className="text-sm">{listing?.listing.sq_ft} + sq.ft</p>
             </div>
           </div>
 
           {/* More Details */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">More details</h3>
-            <div className="grid grid-cols-2 gap-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Type</p>
-                <p className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.category)}</p>
+         
+          {/* <div className="space-y-2">
+              <h3 className="font-semibold text-sm">More details</h3>
+              <div className="grid grid-cols-2 gap-y-2 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Type</span>
+                  <p>Apartment</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Project name</span>
+                  <p>{listing?.listing.location}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Rent frequency</span>
+                  <p>Monthly</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">No of Bedrooms</span>
+                  <p>{getBedroomDisplay(listing?.listing.no_of_bedrooms)}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">No of Bathrooms</span>
+                  <p>{getBathrooms(listing?.listing.no_of_bathrooms)}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Property size (sq.ft)</span>
+                  <p>{listing?.listing.sq_ft}</p>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">City</span>
+                  <p>{listing?.listing.location}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Project name</p>
-                <p className="text-sm">{listing?.listing.title}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Rent frequency</p>
-                <p className="text-sm">{listing?.listing.rental_frequency}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">No of Bedrooms</p>
-                <p className="text-sm">{getBedroomDisplay(listing?.listing.no_of_bedrooms)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">No of Bathrooms</p>
-                <p className="text-sm">{getBathrooms(listing?.listing.no_of_bathrooms)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Furnishing</p>
-                <p className="text-sm">{listing?.listing.furnished}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Property size (sq.ft)</p>
-                <p className="text-sm">{listing?.listing.sq_ft}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">City</p>
-                <p className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.city)}</p>
-              </div>
-            </div>
+            </div> */}
+
+      {/* <div className="px-4 py-3 border-b-8 pb-8 border-gray-100">
+      <h2 className="text-base font-semibold mb-4">More details</h2>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <span className="text-sm">Type</span>
+          <div className='break-words max-w-[50px] text-right'>
+            <span className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.category)}</span>
           </div>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">Project name</span>
+          <span className="text-sm">{listing?.listing.title}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm ">Rent frequency</span>
+          <span className="text-sm">{listing?.listing.rental_frequency}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">No of Bedrooms</span>
+          <span className="text-sm">{getBedroomDisplay(listing?.listing.no_of_bedrooms)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm ">No of Bathrooms</span>
+          <span className="text-sm">{listing?.listing.no_of_bathrooms}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm ">Furnishing</span>
+          <span className="text-sm">{listing?.listing.furnished}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm ">Property size (sq.ft)</span>
+          <span className="text-sm">{listing?.listing.sq_ft}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">City</span>
+          <span className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.city)}</span>
+        </div>
+      </div>
+    </div> */}
+
+<div className="px-4 py-3 border-b-8 pb-8 border-gray-100">
+      <h2 className="text-base font-semibold mb-4">More details</h2>
+      <div className="space-y-4">
+        <div className="flex justify-between items-start">
+          <span className="text-sm">Type</span>
+          <div className="text-right max-w-[50%]">
+            <span className="text-sm break-words">
+              {replaceUnderscoresWithSpaces(listing?.listing.category)}
+            </span>
+          </div>
+        </div>
+        <div className="flex justify-between items-start">
+          <span className="text-sm">Project name</span>
+          <span className="text-sm text-right max-w-[60%] break-words">
+            {listing?.listing.title}
+          </span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">Rent frequency</span>
+          <span className="text-sm">Monthly</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">No of Bedrooms</span>
+          <span className="text-sm">{getBedroomDisplay(listing?.listing.no_of_bedrooms)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">No of Bathrooms</span>
+          <span className="text-sm">{getBathrooms(listing?.listing.no_of_bathrooms)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm ">Furnishing</span>
+          <span className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.furnished)}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">Property size (sq.ft)</span>
+          <span className="text-sm">{listing?.listing.sq_ft}</span>
+        </div>
+        <div className="flex justify-between items-center">
+          <span className="text-sm">City</span>
+          <span className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.city)}</span>
+        </div>
+      </div>
+    </div>
 
           {/* Amenities */}
-          <div className="space-y-4">
+          <div className="space-y-4 px-4 border-b-8 border-gray-100 pb-8">
             <h3 className="font-semibold">Amenities</h3>
             <ul className="space-y-2">
               {showAmmenities === true ? listing?.listing.amenities.map((amenity, index) => (
@@ -316,7 +397,7 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
           </div>
 
           {/* Broker Details */}
-          <div className="space-y-4">
+          <div className="space-y-4 px-4">
             <h3 className="font-semibold">Broker details</h3>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

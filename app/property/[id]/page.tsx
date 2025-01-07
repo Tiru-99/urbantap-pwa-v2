@@ -76,15 +76,7 @@ export default function Page() {
   return (
     <>
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto p-4">
-        <div className="mb-6">
-          <Link href="/listings" passHref>
-            <Button variant="outline" className="mb-4">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              View All Listings
-            </Button>
-          </Link>
-        </div>
+      <div className="max-w-full md:max-w-4xl md:mx-auto md:p-4">
         <PropertyDetails listing={listing} />
       </div>
     </div>
