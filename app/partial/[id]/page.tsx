@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button'
 import axios from 'axios'
 import { ArrowLeft } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { Loader } from '@/components/Loader'
+import PartialListing from '@/components/PartialListing'
+
 
 interface Listing {
   listing:{
@@ -57,8 +58,8 @@ export default function Page() {
   };
   
   useEffect(() => {
-    setIsLoading(true);
     const api = process.env.NEXT_PUBLIC_API;
+    setIsLoading(true);
     axios.get(`${api}/listings/${id}`, { headers })
         .then((response) => {
             console.log("This is my response data ", response.data)
@@ -74,7 +75,6 @@ export default function Page() {
 }, []);
 
   return (
-    <>
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-4">
         <div className="mb-6">
@@ -85,10 +85,8 @@ export default function Page() {
             </Button>
           </Link>
         </div>
-        <PropertyDetails listing={listing} />
+        <PartialListing listing={listing} />
       </div>
     </div>
-    {isLoading && <Loader size="lg" />}
-    </>
   )
 }

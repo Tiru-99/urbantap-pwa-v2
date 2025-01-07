@@ -1,148 +1,179 @@
 "use client"
-import { useState } from 'react'
+import { useState , useEffect} from 'react'
+import axios from 'axios'
+import Link from 'next/link'
 import { MapPin, Home, Bath, Square , Expand } from 'lucide-react'
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import FixedNavbar from '@/components/FixedNavbar'
+import { Loader } from '@/components/Loader'
 
 
 interface Listing {
-  id: string
-  user: {
+  listing:{
+    id: string
+    title: string
+    image_urls: string[] 
+    price : string
+    category : string
+    looking_for : boolean
+    min_price : string 
+    address : string 
+    location: string
+    sq_ft: string , 
+    no_of_bedrooms: string , 
+    no_of_bathrooms: string ,
+    created_at: string,
+  }
+  broker: {
+    id: string
     name: string
-    avatar: string
+    profile_pic: string
   }
-  title: string
-  description: string
-  images: string[]
-  price: string
-  location: string
-  details: {
-    bedrooms: number
-    bathrooms: number
-    area: string
+  
+  company : {
+    name: string
   }
-  postedAt: string
 }
 
-const sampleListings: Listing[] = [
-  {
-    id: '1',
-    user: {
-      name: 'Tiru',
-      avatar: 'T',
-    },
-    title: 'Selling Off Plan',
-    description: '5 Bedrooms available',
-    images: ['/assets/bedroom.jpg'],
-    price: 'AED 250,000,000',
-    location: '456 Main Street',
-    details: {
-      bedrooms: 3,
-      bathrooms: 2,
-      area: '500+ sq ft',
-    },
-    postedAt: '2 days ago',
-  },
-  {
-    id: '2',
-    user: {
-      name: 'Riya',
-      avatar: 'R',
-    },
-    title: 'Luxury Villa',
-    description: ' 7 Bedrooms with a private pool7 Bedrooms with a private pool7 Bedrooms with a private pool7 Bedrooms with a private pool7 Bedrooms with a private pool',
-    images: ['/assets/bedroom.jpg'],
-    price: 'AED 600,000,000',
-    location: '789 Beach Avenue',
-    details: {
-      bedrooms: 7,
-      bathrooms: 6,
-      area: '10000+ sq ft',
-    },
-    postedAt: '5 days ago',
-  },
-  {
-    id: '3',
-    user: {
-      name: 'Arjun',
-      avatar: 'A',
-    },
-    title: 'Spacious Apartment',
-    description: '3 Bedrooms in the city center',
-    images: ['/assets/bedroom.jpg'],
-    price: 'AED 3,500,000',
-    location: '123 Downtown Road',
-    details: {
-      bedrooms: 3,
-      bathrooms: 3,
-      area: '1500 sq ft',
-    },
-    postedAt: '1 week ago',
-  },
-  {
-    id: '4',
-    user: {
-      name: 'Zara',
-      avatar: 'Z',
-    },
-    title: 'Modern Penthouse',
-    description: '2 Bedrooms with a rooftop garden',
-    images: ['/assets/bedroom.jpg'],
-    price: 'AED 12,000,000',
-    location: '456 Skyline Avenue',
-    details: {
-      bedrooms: 2,
-      bathrooms: 2,
-      area: '2000 sq ft',
-    },
-    postedAt: '3 days ago',
-  },
-  {
-    id: '5',
-    user: {
-      name: 'Karan',
-      avatar: 'K',
-    },
-    title: 'Family Home',
-    description: '4 Bedrooms near the park',
-    images: ['/assets/bedroom.jpg'],
-    price: 'AED 5,500,000',
-    location: '678 Green Park Lane',
-    details: {
-      bedrooms: 4,
-      bathrooms: 3,
-      area: '2500 sq ft',
-    },
-    postedAt: '6 days ago',
-  },
-  {
-    id: '6',
-    user: {
-      name: 'Meera',
-      avatar: 'M',
-    },
-    title: 'Cozy Studio',
-    description: 'Perfect for singles or couples',
-    images: ['/assets/bedroom.jpg'],
-    price: 'AED 850,000',
-    location: '123 Central Street',
-    details: {
-      bedrooms: 1,
-      bathrooms: 1,
-      area: '500 sq ft',
-    },
-    postedAt: '2 weeks ago',
-  }
-]
 
 
 
 export default function PropertyListings() {
-    //const [showDownloadPrompt, setShowDownloadPrompt] = useState(false)
 
-    const[clicked , setClicked] = useState(false);
+
+    //const [showDownloadPrompt, setShowDownloadPrompt] = useState(false)
+    const[listings , setListings] = useState<Listing[]>([]); 
+    const[isLoading , setIsLoading] = useState(false);
+
+    const headers = {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with your API key or token
+        'Content-Type': 'application/json',
+      };
+
+      useEffect(() => {
+        const api = process.env.NEXT_PUBLIC_API;
+        setIsLoading(true);
+        axios.get(`${api}/listings`, { headers })
+            .then((response) => {
+                //to show the latest listings
+                const reversedListings = response.data.data.reverse(); 
+                setListings(reversedListings);
+                setIsLoading(false);
+            })
+            .catch((e) => {
+                console.log("Something went wrong while fetching the api", e);
+            })
+            .finally(() => { // Corrected syntax: Use an arrow function for finally
+                setIsLoading(false);
+            });
+    }, []);
+    
+    //helper functions
+    function timeAgo(isoDateString: string): string {
+        const now = new Date();
+        const inputDate = new Date(isoDateString);
+      
+        if (isNaN(inputDate.getTime())) {
+          throw new Error('Invalid ISO date string');
+        }
+      
+        const diffInMs = now.getTime() - inputDate.getTime();
+        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        const diffInDays = Math.floor(diffInHours / 24);
+        const diffInMonths = Math.floor(diffInDays / 30);
+        const diffInYears = Math.floor(diffInDays / 365);
+      
+        if (diffInYears > 0) {
+          return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
+        }
+        if (diffInMonths > 0) {
+          return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
+        }
+        if (diffInDays > 0) {
+          return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
+        }
+        if (diffInHours > 0) {
+          return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
+        }
+        if (diffInMinutes > 0) {
+          return `${diffInMinutes} ${diffInMinutes === 1 ? 'minute' : 'minutes'} ago`;
+        }
+        return 'just now';
+      }
+
+      //function to parse no of bedrooms to frontend
+      function getBedroomDisplay(bedroom : string){
+        if(bedroom === "Studio"){
+            return "Studio"
+        }
+        else if(bedroom === "One"){
+            return "1"
+        }
+        else if(bedroom === "Two"){
+            return "2"
+        }
+        else if(bedroom === "Three"){
+            return "3"
+        }
+        else if(bedroom === "Four_Plus"){
+            return "4+"
+        }
+        else{
+            return "null"
+        }
+      }
+
+      function getBathrooms(bathroom : string){
+        if(bathroom === 'One'){
+            return "1"
+        }
+        else if(bathroom === 'Two'){
+            return "2"
+        }
+        else if(bathroom === 'Three_Plus'){
+            return "3+"
+        }
+        else{
+            return "null"
+        }
+      }
+
+      // to get avatar initials in case the user image is not present
+      const getInitials = (name: string) => {
+        const nameParts = name.split(' ');
+        const initials = nameParts
+          .map(part => part.charAt(0).toUpperCase())
+          .join('');
+        return initials;
+      };
+
+      const createTitleForListing = (looking_for: boolean, category: string) => {
+        const formattedCategory = category.toLowerCase().replace(/_/g, " "); // Convert to lowercase and replace underscores
+        if (looking_for === false) {
+          return `Selling ${formattedCategory}`;
+        } else {
+          return `Looking for ${formattedCategory}`;
+        }
+      };
+
+     
+      
+      
+    const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
+
+        function toggleExpanded(listingId: string) {
+            setExpandedStates(prev => ({
+            ...prev,
+            [listingId]: !prev[listingId]
+            }));
+        }
+      
+
+
+
     return (
       <>
       <FixedNavbar></FixedNavbar>
@@ -151,12 +182,14 @@ export default function PropertyListings() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-semibold">Looking for Rental</h1>
       </div>
+      
+      {isLoading && <Loader size="lg" />}
 
       {/* Listings */}
       <div className="space-y-8">
-        {sampleListings.map((listing, index) => (
+        {listings.reverse().slice(0,6).map((listing, index) => (
           <div 
-            key={listing.id} 
+            key={listing.listing.id} 
             className={cn(
               "max-w-3xl mx-auto bg-white rounded-xl shadow-sm",
               index === 5 && "relative"
@@ -175,51 +208,74 @@ export default function PropertyListings() {
             <div className="flex justify-between px-4 py-4">
               <div className="flex gap-3">
                 <Avatar className="w-10 h-10">
-                  <AvatarFallback>{listing.user.avatar}</AvatarFallback>
+                  {listing.broker.profile_pic ? (
+                    <img src={listing.broker.profile_pic}></img>
+                  ):(
+                    <AvatarFallback>
+                        {getInitials(listing.broker.name)}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
-                <div className="flex flex-col">
-                  <h3 className="font-semibold text-sm">{listing.user.name}</h3>
-                  <p className="text-sm text-muted-foreground">Luxury Homes Ltd.</p>
+                <div className="flex flex-col justify-center">
+                  <h3 className="font-semibold text-sm">{listing.broker.name}</h3>
+                  <p className="text-sm text-muted-foreground">{listing.company.name}</p>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">{listing.postedAt}</p>
+              <p className="text-sm text-muted-foreground">{timeAgo(listing.listing.created_at)}</p>
             </div>
 
             <div className="px-4 pb-3">
-              <h2 className="text-sm font-semibold">{listing.title}</h2>
-              <p className="text-sm text-muted-foreground mt-1">{clicked || listing.description.length < 100 ?  (listing.description):(listing.description.slice(0,80))} {listing.description.length > 60 &&(
-                <span className='text-gray-600 font-bold cursor-pointer' onClick={()=>setClicked((prevState)=>!prevState)}>{clicked === true ? " ...Read Less" : " ...Read More"}</span>
-              )} </p>
+              <Link href={`/partial/${listing.listing.id}`}><h2 className="text-sm font-semibold">{createTitleForListing(listing.listing.looking_for , listing.listing.category)}</h2></Link>
+              <p className="text-sm text-muted-foreground mt-1">
+                    {listing.listing.title && (
+                    <>
+                        {expandedStates[listing.listing.id] 
+                        ? listing.listing.title 
+                        : listing.listing.title.slice(0, 80)}
+                        {listing.listing.title.length > 80 && (
+                        <span
+                            className="text-gray-600 font-bold cursor-pointer"
+                            onClick={() => toggleExpanded(listing.listing.id)}
+                        >
+                            {expandedStates[listing.listing.id] ? " ...Read Less" : " ...Read More"}
+                        </span>
+                        )}
+                    </>
+                    )}
+                </p>
             </div>
 
-            <div className="w-full md:h-[400px] h-[200px] relative">
-              <img 
-                src={listing.images[0]}
-                alt={listing.title}
-                className="w-full h-full object-cover rounded-t-lg"
-              />
-            </div>
+           {listing.listing.image_urls && listing.listing.image_urls.length > 0 && <div>
+                <div className="w-full md:h-[400px] h-[200px] relative">
+                    <img 
+                        src={listing.listing.image_urls[0]}
+                        alt={listing.listing.title}
+                        className="w-full h-full object-cover rounded-t-lg"
+                    />
+                    </div>
 
-            <div className="bg-blue-50 px-4 py-3">
-              <p className="font-semibold text-lg">Budget: {listing.price}</p>
-              <div className="flex items-center gap-2 mt-2">
-                <MapPin className="w-4 h-4 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">{listing.location}</p>
-              </div>
-            </div>
+                    <div className="bg-blue-50 px-4 py-3 rounded-b-xl">
+                    <p className="font-semibold text-lg">Budget: {listing.listing.min_price} AED</p>
+                    <div className="flex items-center gap-2 mt-2">
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">{listing.listing.address}</p>
+                    </div>
+                    </div>
+                </div>
+            }
 
             <div className="px-4 py-3 flex items-center justify-between border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <Home className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">{listing.details.bedrooms} BHK</span>
+                <span className="text-sm text-muted-foreground">{getBedroomDisplay(listing.listing.no_of_bedrooms)} BHK</span>
               </div>
               <div className="flex items-center gap-2">
                 <Bath className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">{listing.details.bathrooms} Bath</span>
+                <span className="text-sm text-muted-foreground">{getBathrooms(listing.listing.no_of_bathrooms)} Bath</span>
               </div>
               <div className="flex items-center gap-2">
                 <Expand className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground">{listing.details.area}</span>
+                <span className="text-sm text-muted-foreground">{listing.listing.sq_ft} sq.ft</span>
               </div>
             </div>
 
@@ -237,8 +293,6 @@ export default function PropertyListings() {
                 Share
               </button>
             </div>
-
-            
           </div>
         ))}
       </div>

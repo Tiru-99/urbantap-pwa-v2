@@ -2,10 +2,9 @@
 import{ useState } from 'react';
 import { ChevronLeft , ChevronRight, Circle, LucideSyringe, MapPin} from 'lucide-react'
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Home, Bath , Expand , Upload , ArrowLeft} from 'lucide-react'
 import Link from 'next/link'
-
+import { GatedContent } from './GatedContent';
 
 interface Listing {
   listing:{
@@ -43,11 +42,10 @@ interface PropertyDetailsProps {
   listing: Listing | undefined;
 }
 
-export default function PropertyDetails({listing} : PropertyDetailsProps) {
+export default function PartialListing({listing} : PropertyDetailsProps) {
 
   
   const[readMore , setReadMore] = useState<boolean>(false);
-  const[showAmmenities , setShowAmmenities] = useState<boolean>(false);
   const[carouselIndex , setCarouselIndex] = useState<number>(0);
 
   function getBedroomDisplay(bedroom : string | undefined){
@@ -92,18 +90,7 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
     }
   }
 
-  
-      // to get avatar initials in case the user image is not present
-      const getInitials = (name: string | undefined) => {
-        if(!name){
-          return null; 
-        }
-        const nameParts = name.split(' ');
-        const initials = nameParts
-          .map(part => part.charAt(0).toUpperCase())
-          .join('');
-        return initials;
-      };
+
 
       const createTitleForListing = (looking_for: boolean | undefined, category: string | undefined) => {
         if(!category){
@@ -117,17 +104,10 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
         }
       };
 
-      
-      function replaceUnderscoresWithSpaces(inputString:string | undefined) {
-        if(!inputString){
-          return null; 
-        }
-        return inputString.replace(/_/g, ' ');
-      }
+
  
 
   return (
-    <>
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b">
@@ -262,80 +242,14 @@ export default function PropertyDetails({listing} : PropertyDetailsProps) {
           {/* More Details */}
           <div className="space-y-4">
             <h3 className="font-semibold">More details</h3>
-            <div className="grid grid-cols-2 gap-y-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Type</p>
-                <p className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.category)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Project name</p>
-                <p className="text-sm">{listing?.listing.title}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Rent frequency</p>
-                <p className="text-sm">{listing?.listing.rental_frequency}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">No of Bedrooms</p>
-                <p className="text-sm">{getBedroomDisplay(listing?.listing.no_of_bedrooms)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">No of Bathrooms</p>
-                <p className="text-sm">{getBathrooms(listing?.listing.no_of_bathrooms)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Furnishing</p>
-                <p className="text-sm">{listing?.listing.furnished}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Property size (sq.ft)</p>
-                <p className="text-sm">{listing?.listing.sq_ft}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">City</p>
-                <p className="text-sm">{replaceUnderscoresWithSpaces(listing?.listing.city)}</p>
-              </div>
+            <div className="p-4 max-w-full mx-auto ">
+                <GatedContent />
             </div>
           </div>
 
-          {/* Amenities */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">Amenities</h3>
-            <ul className="space-y-2">
-              {showAmmenities === true ? listing?.listing.amenities.map((amenity, index) => (
-                <li key={index} className="text-sm">• {amenity}</li>
-              )) : (listing?.listing.amenities.slice(0,3).map((amenity, index) => (
-                <li key={index} className="text-sm">• {amenity}</li>
-              )))}
-            </ul>
-            <Button variant="outline"
-            className="text-sm rounded-full bg-gray-100 start-0"
-            onClick={()=>(setShowAmmenities((prevState)=>(!prevState)))}>
-              {showAmmenities ? "Hide Ammenities" : "Show All Ammenities"}
-            </Button>
-          </div>
-
-          {/* Broker Details */}
-          <div className="space-y-4">
-            <h3 className="font-semibold">Broker details</h3>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  {listing?.broker.profile_pic ? (<img src={listing.broker.profile_pic}></img>) :(
-                    <AvatarFallback>
-                      {getInitials(listing?.broker.name)}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-                <div>
-                  <p className="font-medium text-sm">{listing?.broker.name}</p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
+
     </div>
-    </>
   )
 }

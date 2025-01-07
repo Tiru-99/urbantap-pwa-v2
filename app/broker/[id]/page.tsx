@@ -1,8 +1,11 @@
 "use client"
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button";
-import { useState } from "react"
+import axios from "axios";
+import { useState , useEffect} from "react"
 import FixedNavbar from "@/components/FixedNavbar";
+import { useParams } from "next/navigation";
 
 interface ExperienceProps {
     img : string; 
@@ -11,12 +14,34 @@ interface ExperienceProps {
     timePeriod : string;
 }
 
+interface Broker {
+    id: string;
+    name: string;
+    email: string;
+    info: string;
+    y_o_e: number; // years of experience
+    languages: string[];
+    is_certified: boolean;
+    profile_pic: string;
+    country_code: string;
+    w_number: string;
+    ig_link: string;
+    linkedin_link: string;
+    designation: string;
+    company_id: string;
+    user_id: string;
+    company: Company;
+  }
+  
+  interface Company {
+    id: string;
+    name: string;
+    description: string;
+    logo: string;
+  }
+  
+
 export default function Broker(){
-
-    const paragraph = "I am a dedicated and results-oriented real estate agent passionate about helping clients find their dream homes and make sound investments. With a strong understanding of the property market and a keen eye for detail, I strive to provide personalized services tailored to each client's unique needs. Whether you're buying, selling, or investing, I ensure the process is seamless and stress-free by offering expert guidance and market insights. I take pride in building lasting relationships based on trust, transparency, and a genuine commitment to achieving the best outcomes. Beyond work, I enjoy exploring architecture, staying updated on market trends, and connecting with people from all walks of life. My mission is to turn your real estate goals into a reality while delivering an exceptional experience every step of the way."
-
-    const languages = ["English" , "Arabic" , "Hindi"];
-    const[readMore , setReadMore] = useState(true);
 
     const Experience : ExperienceProps[] = [
         {
@@ -38,6 +63,56 @@ export default function Broker(){
             timePeriod : "5 months"
         }
     ]
+
+    const sampleBroker = {
+        id: "c41222ea-ed64-4029-91e8-f96c6c4e19d4",
+        name: "Aayush Tirmanwar",
+        email: "tiru@gmail.com",
+        info: "Hi, this is Aayush, a broker.",
+        y_o_e: 41, // Years of experience
+        languages: ["English", "Hindi"],
+        is_certified: true,
+        profile_pic: "", // Placeholder for a profile picture URL
+        country_code: "+1",
+        w_number: "9172406138", // WhatsApp number
+        ig_link: "abcd", // Placeholder for Instagram link
+        linkedin_link: "abcd", // Placeholder for LinkedIn link
+        designation: "Developer",
+        company_id: "ba023927-2845-4a02-af00-28364b44e6ea",
+        user_id: "4f07cac9-3f15-4437-a40b-f3409db3c7e3",
+        company: {
+          id: "ba023927-2845-4a02-af00-28364b44e6ea",
+          name: "Urbantap",
+          description: "", // Placeholder for company description
+          logo: "", // Placeholder for company logo URL
+        },
+      };
+      
+    const[broker , setBroker] = useState(); 
+    const[readMore , setReadMore] = useState<boolean>(true)
+    const params = useParams();
+    const id = params.id ; 
+    console.log(id)
+
+    console.log("This is my broker data" , broker);
+
+    const headers = {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with your API key or token
+        'Content-Type': 'application/json',
+      };
+
+    useEffect(()=>{
+        const api = process.env.NEXT_PUBLIC_API; 
+
+            axios.get(`${api}/brokers/${id}` , { headers })
+            .then((response)=>{
+                setBroker(response.data);
+            }).catch((e)=>{
+                console.log("Something went wrong while fetching data" , e)
+            })
+
+    },[])
+    console.log("this is my broker details" , broker);
     const[clicked, setClicked] = useState(false); 
     return(
         <>
@@ -48,14 +123,28 @@ export default function Broker(){
                     <div className="flex justify-left gap-4">
                         <div>
                             <Avatar className="h-24 w-24">
-                                <AvatarFallback>OF</AvatarFallback>
+                                <AvatarFallback>AT</AvatarFallback>
                             </Avatar>
                         </div>
 
                         <div className="flex flex-col justify-center">
-                            <h3 className="font-bold text-2xl">Omar Faizan</h3>
-                            <p className="flex-wrap text-gray-600 font-light">Real Estate Agent at Sobha Realty</p>
+                            <h3 className="font-bold text-2xl">{sampleBroker.name}</h3>
+                            <p className="flex-wrap text-gray-600 font-light">Developer at Urbantap</p>
                         </div>
+                    </div>
+                </div>
+
+                <div className="max-w-sm p-4 mt-4 border-2 border-dashed border-gray-300 rounded-lg bg-white">
+                    <div className="flex flex-col items-center gap-4">
+                        {/* Lock icon - replace src with your actual lock image */}
+                        <img
+                        src="/assets/img/lock.png"
+                        alt="Lock icon"
+                        className="w-8 h-8"
+                        />
+                        <p className="text-center text-gray-800 font-medium">
+                        Unlock info by downloading the app
+                        </p>
                     </div>
                 </div>
 
@@ -92,10 +181,11 @@ export default function Broker(){
                             ))}
                         </div>
 
+
                         <div className="border-b-2 pb-5">
                             <h2 className="font-bold text-xl pt-3">Profile Info</h2>
-                            <p className="pt-3 text-sm">{readMore || paragraph.length < 100  ? `${paragraph.slice(0 ,90)}...` : paragraph}</p>
-                            <p className="pt-2 text-md"> {paragraph.length > 100 && (<span className="cursor-pointer font-bold" onClick={()=>(setReadMore((prevState)=>!prevState))}>{readMore === true ? "Read More" : "Read Less"}</span>) } </p>
+                            <p className="pt-3 text-sm">{readMore || sampleBroker.info.length < 100  ? `${sampleBroker.info.slice(0 ,90)}` : sampleBroker.info}</p>
+                            <p className="pt-2 text-md"> {sampleBroker.info.length > 100 && (<span className="cursor-pointer font-bold" onClick={()=>(setReadMore((prevState)=>!prevState))}>{readMore === true ? "Read More" : "Read Less"}</span>) } </p>
                         </div>
 
                         <div className="mt-3 ">
@@ -103,7 +193,7 @@ export default function Broker(){
                         </div>
 
                         <div className="flex gap-3 flex-wrap mt-2 border-b-2 pb-6">
-                            {languages.map((language , index)=>(
+                            {sampleBroker.languages.map((language , index)=>(
                                 <div key={index} className="text-center px-4 py-2 border-black border-2 tracking-tight text-sm rounded-full hover:bg-black/5">
                                     {language}
                                 </div>
@@ -125,7 +215,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Phone</div>
-                                    <div className="text-gray-900">523644498</div>
+                                    <div className="text-gray-900">{sampleBroker.country_code} {sampleBroker.w_number}</div>
                                 </div>
                                 </div>
 
@@ -138,7 +228,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Mail</div>
-                                    <div className="text-gray-900">parves@sobha.com</div>
+                                    <div className="text-gray-900">{sampleBroker.email}</div>
                                 </div>
                                 </div>
 
@@ -151,7 +241,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Instagram</div>
-                                    <div className="text-gray-900">@parves</div>
+                                    <div className="text-gray-900">{sampleBroker.ig_link}</div>
                                 </div>
                                 </div>
 
@@ -164,7 +254,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Whatsapp</div>
-                                    <div className="text-gray-900">523644498</div>
+                                    <div className="text-gray-900">{sampleBroker.w_number}</div>
                                 </div>
                                 </div>
 
@@ -177,7 +267,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Linkedin</div>
-                                    <div className="text-gray-900">linkedin.com/omar..</div>
+                                    <div className="text-gray-900">{sampleBroker.linkedin_link}</div>
                                 </div>
                                 </div>
                             </div>
