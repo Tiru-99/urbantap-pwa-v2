@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Home, Bath , Expand , Upload , ArrowLeft} from 'lucide-react'
 import Link from 'next/link'
 import { GatedContent } from './GatedContent';
+import { getBedroomDisplay , getBathrooms , createTitleForListing } from '@/app/utils/utils';
 
 interface Listing {
   listing:{
@@ -48,66 +49,9 @@ export default function PartialListing({listing} : PropertyDetailsProps) {
   const[readMore , setReadMore] = useState<boolean>(false);
   const[carouselIndex , setCarouselIndex] = useState<number>(0);
 
-  function getBedroomDisplay(bedroom : string | undefined){
-    if(!bedroom){
-      return null;
-    }
-    if(bedroom === "Studio"){
-        return "Studio"
-    }
-    else if(bedroom === "One"){
-        return "1"
-    }
-    else if(bedroom === "Two"){
-        return "2"
-    }
-    else if(bedroom === "Three"){
-        return "3"
-    }
-    else if(bedroom === "Four_Plus"){
-        return "4+"
-    }
-    else{
-        return "null"
-    }
-  }
-
-  function getBathrooms(bathroom : string | undefined ){
-    if(!bathroom){
-      return null; 
-    }
-    if(bathroom === 'One'){
-        return "1"
-    }
-    else if(bathroom === 'Two'){
-        return "2"
-    }
-    else if(bathroom === 'Three_Plus'){
-        return "3+"
-    }
-    else{
-        return "null"
-    }
-  }
-
-
-
-      const createTitleForListing = (looking_for: boolean | undefined, category: string | undefined) => {
-        if(!category){
-          return ; 
-        }
-        const formattedCategory = category.toLowerCase().replace(/_/g, " "); // Convert to lowercase and replace underscores
-        if (looking_for === false) {
-          return `Selling ${formattedCategory}`;
-        } else {
-          return `Looking for ${formattedCategory}`;
-        }
-      };
-
-
- 
 
   return (
+    <>
     <div className="min-h-screen bg-background">
       {/* Header */}
       <div className="top-0 z-10 bg-background border-b">
@@ -251,5 +195,6 @@ export default function PartialListing({listing} : PropertyDetailsProps) {
       </div>
 
     </div>
+    </>
   )
 }

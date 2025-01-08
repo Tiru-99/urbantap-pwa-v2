@@ -4,6 +4,8 @@ import { useState , useEffect } from 'react'
 import axios from 'axios'
 import { useParams } from 'next/navigation'
 import PartialListing from '@/components/PartialListing'
+import { Loader } from '@/components/Loader'
+import FixedNavbar from '@/components/FixedNavbar'
 
 
 interface Listing {
@@ -41,14 +43,12 @@ interface Listing {
 
 export default function Page() {
   const params = useParams(); 
+
   const id = params.id; 
-  // 
   
   const[listing , setListing] = useState<Listing | undefined>(); 
   const[isLoading , setIsLoading] = useState(false);
-  console.log(isLoading);
 
-  console.log("This is the listing data " , listing);
 
   const headers = {
     Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with your API key or token
@@ -73,10 +73,15 @@ export default function Page() {
 }, []);
 
   return (
+    <>
+    <FixedNavbar></FixedNavbar>
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-4">
         <PartialListing listing={listing} />
       </div>
     </div>
+
+    {isLoading && <Loader size="lg" />}
+    </>
   )
 }

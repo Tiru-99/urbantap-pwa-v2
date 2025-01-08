@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import FixedNavbar from '@/components/FixedNavbar'
+import { getBedroomDisplay , getBathrooms , createTitleForListing , timeAgo , getInitials } from '../utils/utils'
 import { Loader } from '@/components/Loader'
 
 
@@ -48,7 +49,7 @@ export default function PropertyListings() {
     console.log("This is my Listings" , listings)
 
     const headers = {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with your API key or token
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
         'Content-Type': 'application/json',
       };
 
@@ -61,7 +62,7 @@ export default function PropertyListings() {
             const response = await axios.get(`${api}/listings`, { headers });
             
             if (Array.isArray(response.data.data)) {
-              const reversedListings = await [...response.data.data].reverse();
+              const reversedListings = [...response.data.data].reverse();
               console.log("This is my reversed Listing:", reversedListings);
               setListings(reversedListings);
             }
@@ -75,109 +76,16 @@ export default function PropertyListings() {
         fetchListings();
       }, []);
     
-    //helper functions
-    function timeAgo(isoDateString: string): string {
-        const now = new Date();
-        const inputDate = new Date(isoDateString);
       
-        if (isNaN(inputDate.getTime())) {
-          throw new Error('Invalid ISO date string');
-        }
-      
-        const diffInMs = now.getTime() - inputDate.getTime();
-        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-        const diffInHours = Math.floor(diffInMinutes / 60);
-        const diffInDays = Math.floor(diffInHours / 24);
-        const diffInMonths = Math.floor(diffInDays / 30);
-        const diffInYears = Math.floor(diffInDays / 365);
-      
-        if (diffInYears > 0) {
-          return `${diffInYears} ${diffInYears === 1 ? 'year' : 'years'} ago`;
-        }
-        if (diffInMonths > 0) {
-          return `${diffInMonths} ${diffInMonths === 1 ? 'month' : 'months'} ago`;
-        }
-        if (diffInDays > 0) {
-          return `${diffInDays} ${diffInDays === 1 ? 'day' : 'days'} ago`;
-        }
-        if (diffInHours > 0) {
-          return `${diffInHours} ${diffInHours === 1 ? 'hour' : 'hours'} ago`;
-        }
-        if (diffInMinutes > 0) {
-          return `${diffInMinutes} ${diffInMinutes === 1 ? 'minute' : 'minutes'} ago`;
-        }
-        return 'just now';
+     const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
+
+      function toggleExpanded(listingId: string) {
+          setExpandedStates(prev => ({
+          ...prev,
+          [listingId]: !prev[listingId]
+          }));
       }
-
-      //function to parse no of bedrooms to frontend
-      function getBedroomDisplay(bedroom : string){
-        if(bedroom === "Studio"){
-            return "Studio"
-        }
-        else if(bedroom === "One"){
-            return "1"
-        }
-        else if(bedroom === "Two"){
-            return "2"
-        }
-        else if(bedroom === "Three"){
-            return "3"
-        }
-        else if(bedroom === "Four_Plus"){
-            return "4+"
-        }
-        else{
-            return "null"
-        }
-      }
-
-      function getBathrooms(bathroom : string){
-        if(bathroom === 'One'){
-            return "1"
-        }
-        else if(bathroom === 'Two'){
-            return "2"
-        }
-        else if(bathroom === 'Three_Plus'){
-            return "3+"
-        }
-        else{
-            return "null"
-        }
-      }
-
-      // to get avatar initials in case the user image is not present
-      const getInitials = (name: string) => {
-        const nameParts = name.split(' ');
-        const initials = nameParts
-          .map(part => part.charAt(0).toUpperCase())
-          .join('');
-        return initials;
-      };
-
-      const createTitleForListing = (looking_for: boolean, category: string) => {
-        const formattedCategory = category.toLowerCase().replace(/_/g, " "); // Convert to lowercase and replace underscores
-        if (looking_for === false) {
-          return `Selling ${formattedCategory}`;
-        } else {
-          return `Looking for ${formattedCategory}`;
-        }
-      };
-
-     
       
-      
-    const [expandedStates, setExpandedStates] = useState<Record<string, boolean>>({});
-
-        function toggleExpanded(listingId: string) {
-            setExpandedStates(prev => ({
-            ...prev,
-            [listingId]: !prev[listingId]
-            }));
-        }
-      
-
-
 
     return (
       <>
@@ -197,6 +105,7 @@ export default function PropertyListings() {
               index === 5 && "relative"
             )}
           >
+            {/* if listing index is five , then blur that listing and show download the app button */}
             {index === 5 && (
               <div className="absolute inset-0 z-10 backdrop-blur-sm bg-background/80 flex flex-col items-center justify-center p-6 text-center">
                 <h3 className="text-xl font-semibold mb-2">Want to see more listings?</h3>
@@ -207,6 +116,7 @@ export default function PropertyListings() {
               </div>
             )}
             
+            {/* Profile Pic */}
             <div className="flex justify-between px-4 py-4">
               <div className="flex gap-3">
                 <Avatar className="w-10 h-10">
@@ -225,7 +135,8 @@ export default function PropertyListings() {
               </div>
               <p className="text-sm text-muted-foreground">{timeAgo(listing.listing.created_at)}</p>
             </div>
-
+            
+            {/* Listings deatils and see more section */}
             <div className="px-4 pb-3">
               <Link href={`/partial/${listing.listing.id}`}><h2 className="text-sm font-semibold">{createTitleForListing(listing.listing.looking_for , listing.listing.category)}</h2></Link>
               <p className="text-sm text-muted-foreground mt-1">
@@ -247,6 +158,7 @@ export default function PropertyListings() {
                 </p>
             </div>
 
+            {/* Listing Image Section */}
            {listing.listing.image_urls && listing.listing.image_urls.length > 0 && <div>
                 <div className="w-full md:h-[400px] h-[200px] relative px-4 md:px-0">
                     <img 
@@ -266,6 +178,7 @@ export default function PropertyListings() {
                 </div>
             }
 
+            {/* Key features with logos */}
             <div className="px-4 py-3 flex items-center justify-between mx-4 ">
               <div className="flex items-center gap-2">
                 <Home className="h-4 w-4 text-muted-foreground" />
@@ -281,6 +194,7 @@ export default function PropertyListings() {
               </div>
             </div>
 
+            {/* Share , Enquire and Call Button */}
             <div className="grid grid-cols-3 p-4 border-t">
               <button className="flex items-center justify-center gap-2 py-2.5 px-4 text-gray-600 bg-white rounded-none hover:bg-gray-100 text-sm font-medium border-r-2 border-gray-200 last:border-none">
                 <img className="h-5 w-5" src="/assets/call-calling.png" alt="Call icon" />

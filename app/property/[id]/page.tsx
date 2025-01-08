@@ -4,6 +4,7 @@ import { useState , useEffect } from 'react'
 import axios from 'axios'
 import { useParams } from 'next/navigation'
 import { Loader } from '@/components/Loader'
+import FixedNavbar from '@/components/FixedNavbar'
 
 interface Listing {
   listing:{
@@ -72,6 +73,7 @@ export default function Page() {
 
   return (
     <>
+    <FixedNavbar></FixedNavbar>
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-full md:max-w-4xl md:mx-auto md:p-4">
         <PropertyDetails listing={listing} />

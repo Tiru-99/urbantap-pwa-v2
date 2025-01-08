@@ -6,13 +6,9 @@ import axios from "axios";
 import { useState , useEffect} from "react"
 import FixedNavbar from "@/components/FixedNavbar";
 import { useParams } from "next/navigation";
+import { formatMonthsToYearsAndMonths , getInitials } from "@/app/utils/utils";
+import { Loader } from "@/components/Loader";
 
-interface ExperienceProps {
-    img : string; 
-    companyName : string; 
-    time : string; 
-    timePeriod : string;
-}
 
 interface Broker {
     id: string;
@@ -30,7 +26,6 @@ interface Broker {
     designation: string;
     company_id: string;
     user_id: string;
-    company: Company;
   }
   
   interface Company {
@@ -43,58 +38,14 @@ interface Broker {
 
 export default function Broker(){
 
-    const Experience : ExperienceProps[] = [
-        {
-            img : "/assets/bedroom.jpg",
-            companyName : "Sobha Realty",
-            time : "Dec 23 - Present",
-            timePeriod : "5 months"
-        },
-        {
-            img : "/assets/bedroom.jpg",
-            companyName : "Sobha Realty",
-            time : "Dec 23 - Present",
-            timePeriod : "5 months"
-        }, 
-        {
-            img : "/assets/bedroom.jpg",
-            companyName : "Sobha Realty",
-            time : "Dec 23 - Present",
-            timePeriod : "5 months"
-        }
-    ]
-
-    const sampleBroker = {
-        id: "c41222ea-ed64-4029-91e8-f96c6c4e19d4",
-        name: "Aayush Tirmanwar",
-        email: "tiru@gmail.com",
-        info: "Hi, this is Aayush, a broker.",
-        y_o_e: 41, // Years of experience
-        languages: ["English", "Hindi"],
-        is_certified: true,
-        profile_pic: "", // Placeholder for a profile picture URL
-        country_code: "+1",
-        w_number: "9172406138", // WhatsApp number
-        ig_link: "abcd", // Placeholder for Instagram link
-        linkedin_link: "abcd", // Placeholder for LinkedIn link
-        designation: "Developer",
-        company_id: "ba023927-2845-4a02-af00-28364b44e6ea",
-        user_id: "4f07cac9-3f15-4437-a40b-f3409db3c7e3",
-        company: {
-          id: "ba023927-2845-4a02-af00-28364b44e6ea",
-          name: "Urbantap",
-          description: "", // Placeholder for company description
-          logo: "", // Placeholder for company logo URL
-        },
-      };
       
-    const[broker , setBroker] = useState(); 
+    const[broker , setBroker] = useState<Broker>(); 
+    const[company , setCompany] = useState<Company>(); 
     const[readMore , setReadMore] = useState<boolean>(true)
+    const[isLoading , setIsLoading] = useState<boolean>(false)
     const params = useParams();
     const id = params.id ; 
-    console.log(id)
 
-    console.log("This is my broker data" , broker);
 
     const headers = {
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`, // Replace with your API key or token
@@ -103,37 +54,50 @@ export default function Broker(){
 
     useEffect(()=>{
         const api = process.env.NEXT_PUBLIC_API; 
-
+            setIsLoading(true)
             axios.get(`${api}/brokers/${id}` , { headers })
             .then((response)=>{
-                setBroker(response.data);
+                //set broker data 
+                setBroker(response.data.data.broker);
+                //set company data 
+                setCompany(response.data.data.company);
+                setIsLoading(false);
             }).catch((e)=>{
                 console.log("Something went wrong while fetching data" , e)
-            })
+            }).finally(()=>
+                setIsLoading(false)
+            )
 
     },[])
-    console.log("this is my broker details" , broker);
+
     const[clicked, setClicked] = useState(false); 
+
     return(
         <>
-            <FixedNavbar></FixedNavbar>    
+            <FixedNavbar></FixedNavbar>
+
             <div className="max-w-md mx-auto bg-white min-h-screen p-4">
-                {/* <h2 className="font-bold text-xl text-center">Broker Details</h2> */}
                 <div className="justify-center items-center mt-6">
                     <div className="flex justify-left gap-4">
+                        {/*Name and avatar section */}
                         <div>
                             <Avatar className="h-24 w-24">
-                                <AvatarFallback>AT</AvatarFallback>
+                                {broker?.profile_pic ? (
+                                 <img src={broker.profile_pic}></img>) :(
+                                    <AvatarFallback>{getInitials(broker?.name)}</AvatarFallback>
+                                 )}
+                                
                             </Avatar>
                         </div>
 
                         <div className="flex flex-col justify-center">
-                            <h3 className="font-bold text-2xl">{sampleBroker.name}</h3>
-                            <p className="flex-wrap text-gray-600 font-light">Developer at Urbantap</p>
+                            <h3 className="font-bold text-2xl">{broker?.name}</h3>
+                            <p className="flex-wrap text-gray-600 font-light">{company?.description}</p>
                         </div>
                     </div>
                 </div>
-
+                
+                {/* Lock Icon Section  */}
                 <div className="max-w-sm p-4 mt-4 border-2 border-dashed border-gray-300 rounded-lg bg-white">
                     <div className="flex flex-col items-center gap-4">
                         {/* Lock icon - replace src with your actual lock image */}
@@ -148,7 +112,7 @@ export default function Broker(){
                     </div>
                 </div>
 
-
+                {/* Profile Info and Property Listings Switch Bar */}
                 <div className="bg-gray-100 flex justify-center items-center rounded-md p-1 mt-8 text-sm">
                     <div className={`text-center ${clicked === false ? 'bg-emerald-500' :''} w-full py-2 font-semibold rounded-md cursor-pointer`}
                     onClick={()=>(setClicked((prevState)=>!prevState))}>
@@ -161,31 +125,43 @@ export default function Broker(){
                     </div>  
                 </div>
 
+                {/* See More */}
                 {clicked === false ? (
                     <div className="mt-6">
-                        <h2 className="font-bold text-lg">Total Years of Experience</h2>
-                        <p className="font-normal">12 Years 3 Months</p>
+                        { broker?.y_o_e && (
+                            <>
+                                <h2 className="font-bold text-lg">Total Years of Experience</h2>
+                                <p className="font-normal">{formatMonthsToYearsAndMonths(broker?.y_o_e)}</p>
+                            </>)
+                        }
 
-                        <div className="flex flex-col mt-6 gap-6 border-b-2 pb-10">
-                            {Experience.map((exp , index)=>(
-                                <div key={index} className="flex gap-6">
+                        { company && <div className="flex flex-col mt-6 gap-6 border-b-2 pb-10">                            
+                                <div className="flex gap-6">
                                     <div className="w-16 flex justify-center items-center">
-                                        <img src={exp.img} className="rounded-md h-auto"></img>
+                                    <div className="w-16 h-16">
+                                        {company?.logo ? (
+                                            <img src="/assets/img/instagram.png" className="w-full h-full object-cover" alt="Company Logo" />
+                                        ) : (
+                                            <span className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                                                {getInitials(company?.name)}
+                                            </span>
+                                        )}
+                                    </div>
+
                                     </div>
 
                                     <div className="flex flex-col justify-center">
-                                        <p className="text-md">{exp.companyName}</p>
-                                        <p className="text-sm text-gray-500">{exp.time} : {exp.timePeriod}</p>
+                                        <p className="text-md">{company?.name}</p>
+                                        <p className="text-sm text-gray-500">{formatMonthsToYearsAndMonths(broker?.y_o_e)}</p>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                        </div>}
 
-
+                        {/* Profile Info */}
                         <div className="border-b-2 pb-5">
                             <h2 className="font-bold text-xl pt-3">Profile Info</h2>
-                            <p className="pt-3 text-sm">{readMore || sampleBroker.info.length < 100  ? `${sampleBroker.info.slice(0 ,90)}` : sampleBroker.info}</p>
-                            <p className="pt-2 text-md"> {sampleBroker.info.length > 100 && (<span className="cursor-pointer font-bold" onClick={()=>(setReadMore((prevState)=>!prevState))}>{readMore === true ? "Read More" : "Read Less"}</span>) } </p>
+                            <p className="pt-3 text-sm">{readMore || ( broker?.info && broker?.info.length < 100)  ? `${broker?.info.slice(0 ,90)}` : broker?.info}</p>
+                            <p className="pt-2 text-md"> {broker?.info && broker?.info.length > 100 && (<span className="cursor-pointer font-bold" onClick={()=>(setReadMore((prevState)=>!prevState))}>{readMore === true ? "Read More" : "Read Less"}</span>) } </p>
                         </div>
 
                         <div className="mt-3 ">
@@ -193,7 +169,7 @@ export default function Broker(){
                         </div>
 
                         <div className="flex gap-3 flex-wrap mt-2 border-b-2 pb-6">
-                            {sampleBroker.languages.map((language , index)=>(
+                            {broker?.languages.map((language , index)=>(
                                 <div key={index} className="text-center px-4 py-2 border-black border-2 tracking-tight text-sm rounded-full hover:bg-black/5">
                                     {language}
                                 </div>
@@ -215,7 +191,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Phone</div>
-                                    <div className="text-gray-900">{sampleBroker.country_code} {sampleBroker.w_number}</div>
+                                    <div className="text-gray-900">{broker?.country_code} {broker?.w_number}</div>
                                 </div>
                                 </div>
 
@@ -228,7 +204,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Mail</div>
-                                    <div className="text-gray-900">{sampleBroker.email}</div>
+                                    <div className="text-gray-900">{broker?.email}</div>
                                 </div>
                                 </div>
 
@@ -241,7 +217,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Instagram</div>
-                                    <div className="text-gray-900">{sampleBroker.ig_link}</div>
+                                    <div className="text-gray-900">{broker?.ig_link}</div>
                                 </div>
                                 </div>
 
@@ -254,7 +230,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Whatsapp</div>
-                                    <div className="text-gray-900">{sampleBroker.w_number}</div>
+                                    <div className="text-gray-900">{broker?.w_number}</div>
                                 </div>
                                 </div>
 
@@ -267,7 +243,7 @@ export default function Broker(){
                                 />
                                 <div>
                                     <div className="text-gray-500">Linkedin</div>
-                                    <div className="text-gray-900">{sampleBroker.linkedin_link}</div>
+                                    <div className="text-gray-900">{broker?.linkedin_link}</div>
                                 </div>
                                 </div>
                             </div>
@@ -276,6 +252,7 @@ export default function Broker(){
 
                     </div>
                 ) : (
+                    // Broker Listings Blurred and Lock Component
                     <div className="p-4">
                         <div className="border-2 border-dashed border-black rounded-lg p-6">
                             {/* Blurred Area */}
@@ -300,6 +277,7 @@ export default function Broker(){
                 )}
 
             </div>
+            {isLoading && <Loader size="lg" />}
         </>
     )
 }
