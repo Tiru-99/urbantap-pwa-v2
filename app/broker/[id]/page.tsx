@@ -8,6 +8,7 @@ import FixedNavbar from "@/components/FixedNavbar";
 import { useParams } from "next/navigation";
 import { formatMonthsToYearsAndMonths , getInitials } from "@/app/utils/utils";
 import { Loader } from "@/components/Loader";
+import { GatedContent } from "@/components/GatedContent";
 
 
 interface Broker {
@@ -128,18 +129,18 @@ export default function Broker(){
                 {/* See More */}
                 {clicked === false ? (
                     <div className="mt-6">
-                        { broker?.y_o_e && (
+                        { broker?.y_o_e && broker?.y_o_e > 0 ? (
                             <>
                                 <h2 className="font-bold text-lg">Total Years of Experience</h2>
                                 <p className="font-normal">{formatMonthsToYearsAndMonths(broker?.y_o_e)}</p>
-                            </>)
+                            </>):(<div></div>)
                         }
 
                         { company && <div className="flex flex-col mt-6 gap-6 border-b-2 pb-10">                            
                                 <div className="flex gap-6">
                                     <div className="w-16 flex justify-center items-center">
                                     <div className="w-16 h-16">
-                                        {company?.logo ? (
+                                        {company && company?.logo ? (
                                             <img src="/assets/img/instagram.png" className="w-full h-full object-cover" alt="Company Logo" />
                                         ) : (
                                             <span className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
@@ -180,9 +181,11 @@ export default function Broker(){
                         {/* Social Media Section  */}
                         <div className="mt-5 ">
                             <h2 className="text-xl font-bold mb-6">Contact Info</h2>
+
+                            <GatedContent></GatedContent>
                             
-                            <div className="space-y-6">
-                                {/* Phone */}
+                            {/* <div className="space-y-6">
+                                
                                 <div className="flex items-center gap-4">
                                 <img 
                                     src="/assets/img/phone.png" 
@@ -195,7 +198,7 @@ export default function Broker(){
                                 </div>
                                 </div>
 
-                                {/* Mail */}
+                                
                                 <div className="flex items-center gap-4">
                                 <img 
                                     src="/assets/img/mail.png" 
@@ -208,7 +211,7 @@ export default function Broker(){
                                 </div>
                                 </div>
 
-                                {/* Instagram */}
+                                
                                 <div className="flex items-center gap-4">
                                 <img 
                                     src="/assets/img/instagram.png" 
@@ -221,7 +224,7 @@ export default function Broker(){
                                 </div>
                                 </div>
 
-                                {/* WhatsApp */}
+                                
                                 <div className="flex items-center gap-4">
                                 <img 
                                     src="/assets/img/whatsapp.png" 
@@ -234,7 +237,7 @@ export default function Broker(){
                                 </div>
                                 </div>
 
-                                {/* LinkedIn */}
+                                
                                 <div className="flex items-center gap-4">
                                 <img 
                                     src="/assets/img/linkedin.png" 
@@ -246,7 +249,7 @@ export default function Broker(){
                                     <div className="text-gray-900">{broker?.linkedin_link}</div>
                                 </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
                         
 

@@ -17,7 +17,7 @@ export default function FixedNavbar() {
       <div className="fixed top-0 left-0 right-0 z-50 bg-white border-b shadow-sm">
         <div className="container mx-auto px-4 h-[72px] md:h-[64px] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-20 h-12 bg-primary rounded-xl flex items-center justify-center">
+            <div className="w-20 h-12 bg-gray-800 rounded-xl flex items-center justify-center">
               <img 
                 src="/assets/urbantap.png" 
                 alt="App logo" 
