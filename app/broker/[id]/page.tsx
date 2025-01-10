@@ -140,13 +140,13 @@ export default function Broker(){
                                 <div className="flex gap-6">
                                     <div className="w-16 flex justify-center items-center">
                                     <div className="w-16 h-16">
-                                        {company && company?.logo ? (
-                                            <img src="/assets/img/instagram.png" className="w-full h-full object-cover" alt="Company Logo" />
-                                        ) : (
+                                        {company?.logo ? (
+                                            <img src={company.logo} className="w-full h-full object-cover" alt="Company Logo" />
+                                        ) : company.name ? (
                                             <span className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
                                                 {getInitials(company?.name)}
                                             </span>
-                                        )}
+                                        ):null}
                                     </div>
 
                                     </div>
